@@ -28,7 +28,7 @@ export class AppComponent implements OnInit {
     );
 
     click$.subscribe((e) => {
-      console.log('doble click');
+      console.log('+ doble click');
       this.contador++;
     });
     click$.pipe(debounceTime(2000)).subscribe((_) => {
