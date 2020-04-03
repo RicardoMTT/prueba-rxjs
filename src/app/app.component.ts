@@ -9,16 +9,16 @@ import { map, buffer, throttle, filter, debounceTime } from 'rxjs/operators';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
+  contador = 0;
+
   ngOnInit(): void {
     const eventoClick$ = fromEvent(
       document.getElementById('btnclick'),
       'click'
     );
-    console.log(eventoClick$);
-
-    let contador = 0;
+    const debounced$ = eventoClick$.pipe(debounceTime(250));
     const click$ = eventoClick$.pipe(
-      buffer(eventoClick$.pipe(throttle((ev) => interval(250)))),
+      buffer(debounced$),
       map((list) => {
         return list.length;
       }),
@@ -27,13 +27,12 @@ export class AppComponent implements OnInit {
       })
     );
 
-    click$.subscribe(() => {
-      contador++;
-      const numeroClick = document.getElementById('message');
-      numeroClick.innerHTML = contador.toString();
-
-      console.log('Diste mas clicks');
-      console.log(contador);
+    click$.subscribe((e) => {
+      console.log('doble click');
+      this.contador++;
+    });
+    click$.pipe(debounceTime(2000)).subscribe((_) => {
+      document.getElementById('message').innerHTML = this.contador.toString();
     });
   }
 
